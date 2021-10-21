@@ -109,7 +109,7 @@ func UpdateUser(writer http.ResponseWriter, request *http.Request) {
 }
 
 func main() {
-	router := mux.NewRouter()
+	router := mux.NewRouter().StrictSlash(true)
 
 	users = append(users, User{ID: "1", FirstName: "Aakash", LastName: "Pandit", Email: "aakashpandit366@gmail.com", Contact: "8698410175"})
 	users = append(users, User{ID: "2", FirstName: "Siddhesh", LastName: "Pandit", Email: "Sid@gmail.com", Contact: "1234543210"})
