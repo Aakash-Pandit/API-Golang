@@ -21,68 +21,68 @@ type User struct {
 
 var users []User
 
-func Home(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Content-Type", "application/json")
+func Home(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
 	data := map[string]string{
 		"detail": "This is API Home Page of version V1",
 	}
-	writer.WriteHeader((200))
-	json.NewEncoder(writer).Encode(data)
+	response.WriteHeader((200))
+	json.NewEncoder(response).Encode(data)
 }
 
-func GetAllUsers(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader((200))
-	json.NewEncoder(writer).Encode(users)
+func GetAllUsers(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader((200))
+	json.NewEncoder(response).Encode(users)
 }
 
-func GetUser(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Content-Type", "appication/json")
+func GetUser(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "appication/json")
 	params := mux.Vars(request)
 	for _, item := range users {
 		if item.ID == params["id"] {
-			writer.WriteHeader((200))
-			json.NewEncoder(writer).Encode(item)
+			response.WriteHeader((200))
+			json.NewEncoder(response).Encode(item)
 			return
 		}
 	}
-	writer.WriteHeader((200))
-	json.NewEncoder(writer).Encode(map[string]string{})
+	response.WriteHeader((200))
+	json.NewEncoder(response).Encode(map[string]string{})
 }
 
-func CreateUser(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Content-Type", "appication/json")
+func CreateUser(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "appication/json")
 	var user User
 	err := json.NewDecoder(request.Body).Decode(&user)
 
 	if err != nil {
-		json.NewEncoder(writer).Encode(err)
+		json.NewEncoder(response).Encode(err)
 		return
 	}
 
 	users = append(users, user)
-	writer.WriteHeader((201))
-	json.NewEncoder(writer).Encode(user)
+	response.WriteHeader((201))
+	json.NewEncoder(response).Encode(user)
 }
 
-func DeleteUser(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Content-Type", "appication/json")
+func DeleteUser(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "appication/json")
 	params := mux.Vars(request)
 
 	for index, item := range users {
 		if item.ID == params["id"] {
 			users = append(users[:index], users[index+1:]...)
-			writer.WriteHeader((204))
-			json.NewEncoder(writer).Encode(map[string]string{})
+			response.WriteHeader((204))
+			json.NewEncoder(response).Encode(map[string]string{})
 			return
 		}
 	}
-	writer.WriteHeader((400))
-	json.NewEncoder(writer).Encode(map[string]string{"details": "Bad Request"})
+	response.WriteHeader((400))
+	json.NewEncoder(response).Encode(map[string]string{"details": "Bad Request"})
 }
 
-func UpdateUser(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Content-Type", "application/json")
+func UpdateUser(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(request)
 
 	for index, item := range users {
@@ -92,20 +92,20 @@ func UpdateUser(writer http.ResponseWriter, request *http.Request) {
 			users = append(users[:index], users[index+1:]...)
 			err := json.NewDecoder(request.Body).Decode(&user)
 			if err != nil {
-				writer.WriteHeader((400))
-				json.NewEncoder(writer).Encode(err)
+				response.WriteHeader((400))
+				json.NewEncoder(response).Encode(err)
 				return
 			}
-			writer.WriteHeader((200))
+			response.WriteHeader((200))
 			user.ID = params["id"]
 			users = append(users, user)
-			json.NewEncoder(writer).Encode(user)
+			json.NewEncoder(response).Encode(user)
 			return
 		}
 	}
 
-	writer.WriteHeader((400))
-	json.NewEncoder(writer).Encode(map[string]string{})
+	response.WriteHeader((400))
+	json.NewEncoder(response).Encode(map[string]string{})
 }
 
 func main() {
