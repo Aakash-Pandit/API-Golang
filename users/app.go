@@ -1,4 +1,4 @@
-package userapp
+package users
 
 import (
 	"encoding/json"
