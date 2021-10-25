@@ -1,6 +1,8 @@
 package patients
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Patient struct {
 	ID        uuid.UUID `json:"id"`
