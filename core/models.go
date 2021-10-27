@@ -7,7 +7,7 @@ import (
 )
 
 type Base struct {
-	ID         uuid.UUID `json:"id"`
-	CreatedAt  time.Time `json:"created"`
-	ModifiedAt time.Time `json:"modified"`
+	ID       uuid.UUID `json:"id"`
+	Created  time.Time `json:"created"`
+	Modified time.Time `json:"modified"`
 }

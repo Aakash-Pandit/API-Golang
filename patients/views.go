@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/gorm"
 )
 
 var patients []Patient
@@ -99,4 +100,34 @@ func UpdatePatient(response http.ResponseWriter, request *http.Request) {
 func (patient *Patient) BeforeCreate() Patient {
 	(*patient).ID = uuid.New()
 	return *patient
+}
+
+func GetAllMedicines(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	var medicines []Medicine
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	db.Find(&medicines)
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(medicines)
+}
+
+func CreateMedicine(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	var medicine = Medicine{Name: "Medicine A", Cost: 10}
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	db.Create(&medicine)
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(medicine)
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"myapp/config"
+	"myapp/database"
 	"net/http"
 	"strconv"
 
@@ -22,6 +23,7 @@ func Home(response http.ResponseWriter, request *http.Request) {
 }
 
 func main() {
+	database.InitDataBase()
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/api/v1", Home).Methods("GET")

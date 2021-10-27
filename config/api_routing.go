@@ -22,4 +22,7 @@ func UserApiRouting(router *mux.Router) {
 	router.HandleFunc("/api/v1/patients/", patients.CreatePatient).Methods("POST")
 	router.HandleFunc("/api/v1/patients/{id}", patients.UpdatePatient).Methods("PATCH")
 	router.HandleFunc("/api/v1/patients/{id}", patients.DeletePatient).Methods("DELETE")
+
+	router.HandleFunc("/api/v1/medicines", patients.GetAllMedicines).Methods("GET")
+	router.HandleFunc("/api/v1/medicines/", patients.CreateMedicine).Methods("POST")
 }
