@@ -138,7 +138,11 @@ func CreateMedicine(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	var medicine Medicine
 
-	json.NewDecoder(request.Body).Decode(&medicine)
+	err := json.NewDecoder(request.Body).Decode(&medicine)
+	if err != nil {
+		json.NewEncoder(response).Encode(err)
+		return
+	}
 
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
@@ -147,6 +151,25 @@ func CreateMedicine(response http.ResponseWriter, request *http.Request) {
 	defer db.Close()
 
 	db.Create(&medicine)
-	response.WriteHeader(http.StatusOK)
+	response.WriteHeader(http.StatusCreated)
 	json.NewEncoder(response).Encode(medicine)
+}
+
+func DeleteMedicine(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+	id := params["id"]
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		json.NewEncoder(response).Encode(err)
+		return
+	}
+
+	var medicine Medicine
+	db.Find(&medicine, id)
+	db.Delete(&medicine)
+
+	response.WriteHeader(http.StatusNoContent)
+	json.NewEncoder(response).Encode(map[string]string{})
 }
