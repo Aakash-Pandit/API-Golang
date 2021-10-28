@@ -25,4 +25,5 @@ func UserApiRouting(router *mux.Router) {
 
 	router.HandleFunc("/api/v1/medicines", patients.GetAllMedicines).Methods("GET")
 	router.HandleFunc("/api/v1/medicines/", patients.CreateMedicine).Methods("POST")
+	router.HandleFunc("/api/v1/medicines/{id}", patients.GetMedicine).Methods("GET")
 }

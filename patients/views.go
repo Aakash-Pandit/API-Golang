@@ -117,9 +117,28 @@ func GetAllMedicines(response http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(response).Encode(medicines)
 }
 
+func GetMedicine(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+	id := params["id"]
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	var medicine Medicine
+	db.Find(&medicine, id)
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(medicine)
+}
+
 func CreateMedicine(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	var medicine = Medicine{Name: "Medicine A", Cost: 10}
+	var medicine Medicine
+
+	json.NewDecoder(request.Body).Decode(&medicine)
 
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
