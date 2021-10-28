@@ -165,6 +165,7 @@ func DeleteMedicine(response http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(response).Encode(err)
 		return
 	}
+	defer db.Close()
 
 	var medicine Medicine
 	db.Find(&medicine, id)
@@ -173,3 +174,33 @@ func DeleteMedicine(response http.ResponseWriter, request *http.Request) {
 	response.WriteHeader(http.StatusNoContent)
 	json.NewEncoder(response).Encode(map[string]string{})
 }
+
+func UpdateMedicine(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to connect Database")
+	}
+	defer db.Close()
+
+	var medicine Medicine
+	db.Find(&medicine, params["id"])
+	err = json.NewDecoder(request.Body).Decode(&medicine)
+	if err != nil {
+		json.NewEncoder(response).Encode(err)
+		return
+	}
+	db.Save(&medicine)
+
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(&medicine)
+}
+
+// func (m *Medicine) BeforeCreate(tx *gorm.DB) (err error) {
+// 	// m.UUID = uuid.New()
+// 	fmt.Println("In Hooks")
+
+// 	return nil
+// }
