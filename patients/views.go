@@ -162,8 +162,7 @@ func DeleteMedicine(response http.ResponseWriter, request *http.Request) {
 
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
-		json.NewEncoder(response).Encode(err)
-		return
+		panic("Failed to connect Database")
 	}
 	defer db.Close()
 
