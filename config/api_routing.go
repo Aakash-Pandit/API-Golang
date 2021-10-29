@@ -1,6 +1,7 @@
 package config
 
 import (
+	"myapp/organization"
 	"myapp/patients"
 	"myapp/users"
 
@@ -28,4 +29,10 @@ func UserApiRouting(router *mux.Router) {
 	router.HandleFunc("/api/v1/medicines/{id}", patients.GetMedicine).Methods("GET")
 	router.HandleFunc("/api/v1/medicines/{id}", patients.DeleteMedicine).Methods("DELETE")
 	router.HandleFunc("/api/v1/medicines/{id}", patients.UpdateMedicine).Methods("PATCH")
+
+	router.HandleFunc("/api/v1/organizations", organization.GetAllOrganizations).Methods("GET")
+	router.HandleFunc("/api/v1/organizations/", organization.CreateOrganization).Methods("POST")
+	router.HandleFunc("/api/v1/organizations/{id}", organization.GetOrganization).Methods("GET")
+	router.HandleFunc("/api/v1/organizations/{id}", organization.DeleteOrganization).Methods("DELETE")
+	router.HandleFunc("/api/v1/organizations/{id}", organization.UpdateOrganization).Methods("PATCH")
 }

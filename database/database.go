@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"myapp/organization"
 	"myapp/patients"
 
 	"github.com/jinzhu/gorm"
@@ -22,6 +23,7 @@ func InitDataBase() {
 	defer DBConn.Close()
 	fmt.Println("DataBase Connected Successfully")
 
-	DBConn.AutoMigrate(&patients.Medicine{})
+	DBConn.LogMode(true)
+	DBConn.AutoMigrate(&patients.Medicine{}, &organization.Organization{})
 	fmt.Println("DataBase Migrated")
 }
