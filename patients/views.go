@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/gorm"
 )
 
 var patients []Patient
@@ -99,4 +100,99 @@ func UpdatePatient(response http.ResponseWriter, request *http.Request) {
 func (patient *Patient) BeforeCreate() Patient {
 	(*patient).ID = uuid.New()
 	return *patient
+}
+
+func GetAllMedicines(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	var medicines []Medicine
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	db.Find(&medicines)
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(medicines)
+}
+
+func GetMedicine(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+	id := params["id"]
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	var medicine Medicine
+	db.Find(&medicine, id)
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(medicine)
+}
+
+func CreateMedicine(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	var medicine Medicine
+
+	err := json.NewDecoder(request.Body).Decode(&medicine)
+	if err != nil {
+		json.NewEncoder(response).Encode(err)
+		return
+	}
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	db.Create(&medicine)
+	response.WriteHeader(http.StatusCreated)
+	json.NewEncoder(response).Encode(medicine)
+}
+
+func DeleteMedicine(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+	id := params["id"]
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to connect Database")
+	}
+	defer db.Close()
+
+	var medicine Medicine
+	db.Find(&medicine, id)
+	db.Delete(&medicine)
+
+	response.WriteHeader(http.StatusNoContent)
+	json.NewEncoder(response).Encode(map[string]string{})
+}
+
+func UpdateMedicine(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to connect Database")
+	}
+	defer db.Close()
+
+	var medicine Medicine
+	db.Find(&medicine, params["id"])
+	err = json.NewDecoder(request.Body).Decode(&medicine)
+	if err != nil {
+		json.NewEncoder(response).Encode(err)
+		return
+	}
+	db.Save(&medicine)
+
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(&medicine)
 }
