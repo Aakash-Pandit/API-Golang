@@ -197,10 +197,3 @@ func UpdateMedicine(response http.ResponseWriter, request *http.Request) {
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(&medicine)
 }
-
-// func (m *Medicine) BeforeCreate(tx *gorm.DB) (err error) {
-// 	// m.UUID = uuid.New()
-// 	fmt.Println("In Hooks")
-
-// 	return nil
-// }
