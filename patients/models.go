@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 )
 
 type Patient struct {
@@ -23,7 +22,14 @@ func (patient *Patient) BeforeCreate() error {
 }
 
 type Medicine struct {
-	gorm.Model
-	Name string `json:"name"`
-	Cost uint   `json:"cost"`
+	ID       uuid.UUID `json:"id" gorm:"primaryKey;unique;"`
+	Name     string    `json:"name"`
+	Cost     uint      `json:"cost"`
+	Created  time.Time `json:"created"`
+	Modified time.Time `json:"modified"`
+}
+
+func (medicine *Medicine) BeforeCreate() error {
+	(*medicine).ID = uuid.New()
+	return nil
 }

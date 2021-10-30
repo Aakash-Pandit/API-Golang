@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 )
 
 type Organization struct {
@@ -15,7 +14,7 @@ type Organization struct {
 	Modified time.Time `json:"modified"`
 }
 
-func (org *Organization) BeforeCreate(scope *gorm.Scope) error {
+func (org *Organization) BeforeCreate() error {
 	(*org).ID = uuid.New()
 	return nil
 }
