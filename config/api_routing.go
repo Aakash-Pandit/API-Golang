@@ -9,8 +9,6 @@ import (
 )
 
 func UserApiRouting(router *mux.Router) {
-	users.CreateDummyUsers()
-	patients.CreateDummyPatients()
 
 	router.HandleFunc("/api/v1/users", users.GetAllUsers).Methods("GET")
 	router.HandleFunc("/api/v1/users/{id}", users.GetUser).Methods("GET")

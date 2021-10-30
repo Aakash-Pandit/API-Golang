@@ -1,6 +1,10 @@
 package users
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type User struct {
 	ID        uuid.UUID `json:"id"`
@@ -8,4 +12,11 @@ type User struct {
 	LastName  string    `json:"lastname"`
 	Email     string    `json:"email"`
 	Contact   string    `json:"contact"`
+	Created   time.Time `json:"created"`
+	Modified  time.Time `json:"modified"`
+}
+
+func (user *User) BeforeCreate() error {
+	(*user).ID = uuid.New()
+	return nil
 }
