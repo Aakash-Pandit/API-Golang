@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"myapp/organization"
 	"myapp/patients"
+	"myapp/users"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -25,8 +26,11 @@ func InitDataBase() {
 
 	DBConn.LogMode(true)
 	DBConn.AutoMigrate(
+		&users.User{},
+
 		&patients.Medicine{},
 		&patients.Patient{},
+
 		&organization.Organization{},
 	)
 	fmt.Println("DataBase Migrated")

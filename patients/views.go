@@ -5,19 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
-
-var patients []Patient
-
-func CreateDummyPatients() {
-	patients = append(patients, Patient{ID: uuid.New(), FirstName: "Aakash", LastName: "Pandit", Email: "aakashpandit366@gmail.com", Contact: "8698410175"})
-	patients = append(patients, Patient{ID: uuid.New(), FirstName: "Siddhesh", LastName: "Pandit", Email: "Sid@gmail.com", Contact: "1234543210"})
-	patients = append(patients, Patient{ID: uuid.New(), FirstName: "Rasika", LastName: "Pandit", Email: "ras@gmail.com", Contact: "1234543210"})
-	return
-}
 
 ////////////////////////////////////////////// Patient ////////////////////////////////////////////////////
 
