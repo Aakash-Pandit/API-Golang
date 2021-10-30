@@ -3,6 +3,7 @@ package patients
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -18,38 +19,61 @@ func CreateDummyPatients() {
 	return
 }
 
+////////////////////////////////////////////// Patient ////////////////////////////////////////////////////
+
 func GetAllPatients(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader((200))
+
+	var patients []Patient
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to Connect DataBase")
+	}
+	defer db.Close()
+
+	db.Find(&patients)
+	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(patients)
 }
 
 func GetPatient(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "appication/json")
 	params := mux.Vars(request)
-	for _, item := range patients {
-		if item.ID.String() == params["id"] {
-			response.WriteHeader((200))
-			json.NewEncoder(response).Encode(item)
-			return
-		}
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to connect Database")
 	}
-	response.WriteHeader((200))
-	json.NewEncoder(response).Encode(map[string]string{})
+	defer db.Close()
+
+	var patient Patient
+	db.Find(&patient, "id = ?", params["id"])
+
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(patient)
 }
 
 func CreatePatient(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "appication/json")
 	var patient Patient
-	err := json.NewDecoder(request.Body).Decode(&patient)
 
+	err := json.NewDecoder(request.Body).Decode(&patient)
 	if err != nil {
 		json.NewEncoder(response).Encode(err)
 		return
 	}
-	patient.BeforeCreate()
-	patients = append(patients, patient)
-	response.WriteHeader((201))
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to Connect Database")
+	}
+	defer db.Close()
+
+	patient.Created = time.Now()
+	patient.Modified = time.Now()
+
+	db.Create(&patient)
+	response.WriteHeader(http.StatusCreated)
 	json.NewEncoder(response).Encode(patient)
 }
 
@@ -57,50 +81,48 @@ func DeletePatient(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "appication/json")
 	params := mux.Vars(request)
 
-	for index, item := range patients {
-		if item.ID.String() == params["id"] {
-			patients = append(patients[:index], patients[index+1:]...)
-			response.WriteHeader((204))
-			json.NewEncoder(response).Encode(map[string]string{})
-			return
-		}
+	var patient Patient
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to Connect Database")
 	}
-	response.WriteHeader((400))
-	json.NewEncoder(response).Encode(map[string]string{"details": "Bad Request"})
+	defer db.Close()
+
+	db.Find(&patient, "id = ?", params["id"])
+	db.Delete(&patient)
+
+	response.WriteHeader(http.StatusNoContent)
+	json.NewEncoder(response).Encode(map[string]string{})
 }
 
 func UpdatePatient(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(request)
 
-	for index, item := range patients {
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to connect Database")
+	}
+	defer db.Close()
 
-		var patient Patient
-		if item.ID.String() == params["id"] {
-			patients = append(patients[:index], patients[index+1:]...)
-			err := json.NewDecoder(request.Body).Decode(&patient)
-			if err != nil {
-				response.WriteHeader((400))
-				json.NewEncoder(response).Encode(err)
-				return
-			}
-			response.WriteHeader((200))
-			id, _ := uuid.Parse(params["id"])
-			patient.ID = id
-			patients = append(patients, patient)
-			json.NewEncoder(response).Encode(patient)
-			return
-		}
+	var patient Patient
+	db.Find(&patient, "id = ?", params["id"])
+
+	err = json.NewDecoder(request.Body).Decode(&patient)
+	if err != nil {
+		json.NewEncoder(response).Encode(err)
+		return
 	}
 
-	response.WriteHeader((400))
-	json.NewEncoder(response).Encode(map[string]string{})
+	patient.Modified = time.Now()
+	db.Save(&patient)
+
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(patient)
 }
 
-func (patient *Patient) BeforeCreate() Patient {
-	(*patient).ID = uuid.New()
-	return *patient
-}
+////////////////////////////////////////////// Medicine ////////////////////////////////////////////////////
 
 func GetAllMedicines(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
