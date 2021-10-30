@@ -24,6 +24,10 @@ func InitDataBase() {
 	fmt.Println("DataBase Connected Successfully")
 
 	DBConn.LogMode(true)
-	DBConn.AutoMigrate(&patients.Medicine{}, &organization.Organization{})
+	DBConn.AutoMigrate(
+		&patients.Medicine{},
+		&patients.Patient{},
+		&organization.Organization{},
+	)
 	fmt.Println("DataBase Migrated")
 }
