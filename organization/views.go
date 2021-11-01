@@ -57,6 +57,16 @@ func CreateOrganization(response http.ResponseWriter, request *http.Request) {
 	}
 	defer db.Close()
 
+	err = organization.Validate()
+	if err != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		detail := map[string]string{
+			"deatil": err.Error(),
+		}
+		json.NewEncoder(response).Encode(detail)
+		return
+	}
+
 	organization.Created = time.Now()
 	organization.Modified = time.Now()
 
