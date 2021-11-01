@@ -1,13 +1,5 @@
 package organization
 
-// func (org *Organization) Validate() error {
-// 	if (*org).Name == "" {
-// 		return errors.New("name of organization can not be blank")
-// 	}
-
-// 	return nil
-// }
-
 func (org *Organization) Validate() []map[string]string {
 	var err map[string]string
 	var ValidationErrors []map[string]string
