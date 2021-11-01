@@ -53,6 +53,16 @@ func CreatePatient(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	err = patient.Validate()
+	if err != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		detail := map[string]string{
+			"details": err.Error(),
+		}
+		json.NewEncoder(response).Encode(detail)
+		return
+	}
+
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
 		panic("Failed to Connect Database")

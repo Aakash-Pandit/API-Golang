@@ -57,17 +57,6 @@ func CreateOrganization(response http.ResponseWriter, request *http.Request) {
 	}
 	defer db.Close()
 
-	// err = organization.Validate()
-	// if err != nil {
-	// 	response.WriteHeader(http.StatusBadRequest)
-	// 	detail := map[string]string{
-	// 		"details": err.Error(),
-	// 	}
-	// 	json.NewEncoder(response).Encode(detail)
-	// 	return
-	// }
-
-	// var validation_error []map[string]string
 	validation_error := organization.Validate()
 	if validation_error != nil {
 		response.WriteHeader(http.StatusBadRequest)
