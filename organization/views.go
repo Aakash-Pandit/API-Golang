@@ -61,7 +61,7 @@ func CreateOrganization(response http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		response.WriteHeader(http.StatusBadRequest)
 		detail := map[string]string{
-			"deatil": err.Error(),
+			"details": err.Error(),
 		}
 		json.NewEncoder(response).Encode(detail)
 		return
