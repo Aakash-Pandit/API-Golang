@@ -133,6 +133,13 @@ func SignIn(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	validation_error := authentication.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
 		panic("Failed to connect Database")
