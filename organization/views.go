@@ -57,6 +57,13 @@ func CreateOrganization(response http.ResponseWriter, request *http.Request) {
 	}
 	defer db.Close()
 
+	validation_error := organization.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	organization.Created = time.Now()
 	organization.Modified = time.Now()
 
@@ -101,6 +108,14 @@ func UpdateOrganization(response http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(response).Encode(err)
 		return
 	}
+
+	validation_error := organization.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	organization.Modified = time.Now()
 	db.Save(&organization)
 

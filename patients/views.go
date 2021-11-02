@@ -53,6 +53,13 @@ func CreatePatient(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	validation_error := patient.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
 		panic("Failed to Connect Database")
@@ -102,6 +109,13 @@ func UpdatePatient(response http.ResponseWriter, request *http.Request) {
 	err = json.NewDecoder(request.Body).Decode(&patient)
 	if err != nil {
 		json.NewEncoder(response).Encode(err)
+		return
+	}
+
+	validation_error := patient.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
 		return
 	}
 
@@ -155,6 +169,13 @@ func CreateMedicine(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	validation_error := medicine.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
 		panic("failed to connect database")
@@ -204,6 +225,14 @@ func UpdateMedicine(response http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(response).Encode(err)
 		return
 	}
+
+	validation_error := medicine.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	medicine.Modified = time.Now()
 	db.Save(&medicine)
 
