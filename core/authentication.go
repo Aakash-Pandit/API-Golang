@@ -18,7 +18,7 @@ func CreateToken(userid uuid.UUID) (string, error) {
 	atClaims["user_id"] = userid
 	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(goDotEnvVariable("ACCESS_SECRET")))
+	token, err := at.SignedString([]byte(GoDotEnvVariable("ACCESS_SECRET")))
 
 	if err != nil {
 		return "", err
@@ -26,7 +26,7 @@ func CreateToken(userid uuid.UUID) (string, error) {
 	return token, nil
 }
 
-func goDotEnvVariable(key string) string {
+func GoDotEnvVariable(key string) string {
 
 	err := godotenv.Load(".env")
 
