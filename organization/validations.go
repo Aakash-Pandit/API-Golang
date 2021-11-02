@@ -10,7 +10,7 @@ func (org *Organization) Validate() []map[string]string {
 	}
 
 	if (*org).Address == "" {
-		err = map[string]string{"address": "Address of organization can not be blank"}
+		err = map[string]string{"address": "address of organization can not be blank"}
 		ValidationErrors = append(ValidationErrors, err)
 
 	}
