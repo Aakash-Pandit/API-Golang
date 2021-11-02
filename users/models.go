@@ -26,3 +26,9 @@ type UserAuthentication struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type UserToken struct {
+	ID    uuid.UUID `json:"user_id"`
+	Email string    `json:"email"`
+	Token string    `json:"token"`
+}

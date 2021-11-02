@@ -2,6 +2,7 @@ package users
 
 import (
 	"encoding/json"
+	"myapp/core"
 	"net/http"
 	"time"
 
@@ -147,6 +148,31 @@ func SignIn(response http.ResponseWriter, request *http.Request) {
 	defer db.Close()
 
 	var user User
-	db.Find(&user, "email = ?", authentication.Email)
-	json.NewEncoder(response).Encode(user)
+	db_error := db.Find(&user, "email = ?", authentication.Email)
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Email id Not Found"})
+		return
+	}
+
+	if user.Password != authentication.Password {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Incorrect Password"})
+		return
+	}
+
+	token, token_error := core.CreateToken(user.ID)
+	if token_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(map[string]string{"detail": token_error.Error()})
+		return
+	}
+
+	token_obj := UserToken{
+		ID:    user.ID,
+		Email: user.Email,
+		Token: token,
+	}
+
+	json.NewEncoder(response).Encode(token_obj)
 }
