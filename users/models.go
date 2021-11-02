@@ -11,6 +11,7 @@ type User struct {
 	FirstName string    `json:"firstname"`
 	LastName  string    `json:"lastname"`
 	Email     string    `json:"email"`
+	Password  string    `json:"password"`
 	Contact   string    `json:"contact"`
 	Created   time.Time `json:"created"`
 	Modified  time.Time `json:"modified"`
@@ -19,4 +20,15 @@ type User struct {
 func (user *User) BeforeCreate() error {
 	(*user).ID = uuid.New()
 	return nil
+}
+
+type UserAuthentication struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type UserToken struct {
+	ID    uuid.UUID `json:"user_id"`
+	Email string    `json:"email"`
+	Token string    `json:"token"`
 }
