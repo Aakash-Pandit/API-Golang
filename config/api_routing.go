@@ -15,6 +15,8 @@ func UserApiRouting(router *mux.Router) {
 	router.HandleFunc("/api/v1/users/", users.CreateUser).Methods("POST")
 	router.HandleFunc("/api/v1/users/{id}", users.UpdateUser).Methods("PATCH")
 	router.HandleFunc("/api/v1/users/{id}", users.DeleteUser).Methods("DELETE")
+	router.HandleFunc("/api/v1/users/signup", users.CreateUser).Methods("POST")
+	router.HandleFunc("/api/v1/users/signin", users.SignIn).Methods("POST")
 
 	router.HandleFunc("/api/v1/patients", patients.GetAllPatients).Methods("GET")
 	router.HandleFunc("/api/v1/patients/{id}", patients.GetPatient).Methods("GET")

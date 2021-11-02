@@ -57,6 +57,13 @@ func CreateUser(response http.ResponseWriter, request *http.Request) {
 	}
 	defer db.Close()
 
+	validation_error := user.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	user.Created = time.Now()
 	user.Modified = time.Now()
 
@@ -102,9 +109,37 @@ func UpdateUser(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	validation_error := user.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	user.Modified = time.Now()
 	db.Save(&user)
 
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(&user)
+}
+
+func SignIn(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+
+	var authentication UserAuthentication
+	err := json.NewDecoder(request.Body).Decode(&authentication)
+	if err != nil {
+		json.NewEncoder(response).Encode(err)
+		return
+	}
+
+	db, err := gorm.Open("sqlite3", "test.db")
+	if err != nil {
+		panic("Failed to connect Database")
+	}
+	defer db.Close()
+
+	var user User
+	db.Find(&user, "email = ?", authentication.Email)
+	json.NewEncoder(response).Encode(user)
 }
