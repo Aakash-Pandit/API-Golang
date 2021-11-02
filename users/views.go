@@ -36,7 +36,12 @@ func GetUser(response http.ResponseWriter, request *http.Request) {
 	defer db.Close()
 
 	var user User
-	db.Find(&user, "id = ?", params["id"])
+	db_error := db.Find(&user, "id = ?", params["id"])
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "User Not Found"})
+		return
+	}
 
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(user)
