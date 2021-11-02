@@ -53,13 +53,10 @@ func CreatePatient(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err = patient.Validate()
-	if err != nil {
+	validation_error := patient.Validate()
+	if validation_error != nil {
 		response.WriteHeader(http.StatusBadRequest)
-		detail := map[string]string{
-			"details": err.Error(),
-		}
-		json.NewEncoder(response).Encode(detail)
+		json.NewEncoder(response).Encode(validation_error)
 		return
 	}
 

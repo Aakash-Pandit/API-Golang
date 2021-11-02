@@ -108,6 +108,14 @@ func UpdateOrganization(response http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(response).Encode(err)
 		return
 	}
+
+	validation_error := organization.Validate()
+	if validation_error != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(response).Encode(validation_error)
+		return
+	}
+
 	organization.Modified = time.Now()
 	db.Save(&organization)
 
