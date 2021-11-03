@@ -37,7 +37,12 @@ func GetPatient(response http.ResponseWriter, request *http.Request) {
 	defer db.Close()
 
 	var patient Patient
-	db.Find(&patient, "id = ?", params["id"])
+	db_error := db.Find(&patient, "id = ?", params["id"])
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Patient Not Found"})
+		return
+	}
 
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(patient)
@@ -86,7 +91,12 @@ func DeletePatient(response http.ResponseWriter, request *http.Request) {
 	}
 	defer db.Close()
 
-	db.Find(&patient, "id = ?", params["id"])
+	db_error := db.Find(&patient, "id = ?", params["id"])
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Patient Not Found"})
+		return
+	}
 	db.Delete(&patient)
 
 	response.WriteHeader(http.StatusNoContent)
@@ -104,7 +114,12 @@ func UpdatePatient(response http.ResponseWriter, request *http.Request) {
 	defer db.Close()
 
 	var patient Patient
-	db.Find(&patient, "id = ?", params["id"])
+	db_error := db.Find(&patient, "id = ?", params["id"])
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Patient Not Found"})
+		return
+	}
 
 	err = json.NewDecoder(request.Body).Decode(&patient)
 	if err != nil {
@@ -154,7 +169,13 @@ func GetMedicine(response http.ResponseWriter, request *http.Request) {
 	defer db.Close()
 
 	var medicine Medicine
-	db.Find(&medicine, "id = ?", params["id"])
+	db_error := db.Find(&medicine, "id = ?", params["id"])
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Medicine Not Found"})
+		return
+	}
+
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(medicine)
 }
@@ -201,7 +222,13 @@ func DeleteMedicine(response http.ResponseWriter, request *http.Request) {
 	defer db.Close()
 
 	var medicine Medicine
-	db.Find(&medicine, "id = ?", params["id"])
+	db_error := db.Find(&medicine, "id = ?", params["id"])
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Medicine Not Found"})
+		return
+	}
+
 	db.Delete(&medicine)
 
 	response.WriteHeader(http.StatusNoContent)
@@ -223,6 +250,13 @@ func UpdateMedicine(response http.ResponseWriter, request *http.Request) {
 	err = json.NewDecoder(request.Body).Decode(&medicine)
 	if err != nil {
 		json.NewEncoder(response).Encode(err)
+		return
+	}
+
+	db_error := db.Find(&medicine, "id = ?", params["id"])
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Medicine Not Found"})
 		return
 	}
 

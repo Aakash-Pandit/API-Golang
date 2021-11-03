@@ -35,7 +35,12 @@ func GetOrganization(response http.ResponseWriter, request *http.Request) {
 	defer db.Close()
 
 	var organization Organization
-	db.Find(&organization, "id = ?", params["id"])
+	db_error := db.Find(&organization, "id = ?", params["id"])
+	if db_error.Error != nil {
+		response.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(response).Encode(map[string]string{"detail": "Organization Not Found"})
+		return
+	}
 
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(organization)
